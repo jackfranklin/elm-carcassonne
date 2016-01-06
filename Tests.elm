@@ -1,14 +1,13 @@
-module Tests where
+module Tests (..) where
 
 import ElmTest exposing (..)
-
 import String
-import FooTest
+import TileTests
 
 
 all : Test
 all =
-    suite "A Test Suite"
-      [
-        FooTest.tests
-      ]
+    suite
+        "Carcassonne Tests Suite"
+        [ TileTests.tests
+        ]
