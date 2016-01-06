@@ -24,4 +24,15 @@ type alias Tile =
 
 canPlaceTileNextTo : Tile -> TilePlacement -> Tile -> Bool
 canPlaceTileNextTo placedTile placement newTile =
-    True
+    case placement of
+        Right ->
+            placedTile.right == newTile.left
+
+        Left ->
+            placedTile.right == newTile.left
+
+        Above ->
+            placedTile.top == newTile.bottom
+
+        Below ->
+            placedTile.bottom == newTile.top
