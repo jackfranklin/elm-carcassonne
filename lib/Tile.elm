@@ -1,4 +1,4 @@
-module Tile (Tile, canPlaceTileNextTo, TilePlacement(..)) where
+module Tile (Tile, canPlaceTileNextTo, isPlaced, TilePlacement(..)) where
 
 import TileType exposing (..)
 import TileEdge exposing (..)
@@ -36,3 +36,8 @@ canPlaceTileNextTo placedTile placement newTile =
 
         Below ->
             placedTile.bottom == newTile.top
+
+
+isPlaced : Tile -> Bool
+isPlaced =
+    ((/=) Nothing) << .x
