@@ -1,7 +1,11 @@
-module Tile (Tile, canPlaceTileNextTo, isPlaced, TilePlacement(..)) where
+module Tile (Tile, canPlaceTileNextTo, isPlaced, zipCoordsWithEdgesAroundTile, TilePlacement(..)) where
 
 import TileType exposing (..)
 import TileEdge exposing (..)
+import Maybe.Extra exposing (..)
+import Coord exposing (Coord)
+import Util exposing (unsafeMaybe, zip)
+import Debug
 
 
 type TilePlacement
@@ -22,6 +26,49 @@ type alias Tile =
     }
 
 
+coordsAroundTile : Tile -> List Coord
+coordsAroundTile tile =
+    case isPlaced tile of
+        False ->
+            []
+
+        True ->
+            let
+                x = unsafeMaybe tile.x
+
+                y = unsafeMaybe tile.y
+            in
+                [ ( x - 1, y ), ( x + 1, y ), ( x, y - 1 ), ( x, y + 1 ) ]
+
+
+zipCoordsWithEdgesAroundTile : Tile -> List ( Coord, TilePlacement )
+zipCoordsWithEdgesAroundTile tile =
+    case isPlaced tile of
+        False ->
+            []
+
+        True ->
+            let
+                tileX = unsafeMaybe tile.x
+
+                tileY = unsafeMaybe tile.y
+
+                coords = coordsAroundTile tile
+            in
+                List.map
+                    (\( x, y ) ->
+                        if x < tileX && y == tileY then
+                            ( ( x, y ), Left )
+                        else if x > tileX && y == tileY then
+                            ( ( x, y ), Right )
+                        else if x == tileX && y < tileY then
+                            ( ( x, y ), Below )
+                        else
+                            ( ( x, y ), Above )
+                    )
+                    coords
+
+
 canPlaceTileNextTo : Tile -> TilePlacement -> Tile -> Bool
 canPlaceTileNextTo placedTile placement newTile =
     case placement of
@@ -39,5 +86,5 @@ canPlaceTileNextTo placedTile placement newTile =
 
 
 isPlaced : Tile -> Bool
-isPlaced =
-    ((/=) Nothing) << .x
+isPlaced tile =
+    tile.x /= Nothing && tile.y /= Nothing

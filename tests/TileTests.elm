@@ -2,11 +2,11 @@ module TileTests (..) where
 
 import ElmTest exposing (..)
 import TileEdge exposing (TileEdge(..))
-import Tile exposing (Tile, TilePlacement(..), canPlaceTileNextTo)
+import Tile exposing (Tile, canPlaceTileNextTo, TilePlacement(..))
 import TileType exposing (TileType(..))
 
 
-canPlaceAssertionOne =
+canPlaceTileNextToWhenEdgesMatchAssertion =
     let
         tile1 =
             { left = Road
@@ -34,7 +34,7 @@ canPlaceAssertionOne =
         test "two roads can join up" (assert canPlace)
 
 
-canPlaceAssertionTwo =
+cannotPlaceTilesNextToWhenEdgesDiffer =
     let
         tile1 =
             { left = Road
@@ -66,4 +66,6 @@ tests : Test
 tests =
     suite
         "TileTests"
-        [ canPlaceAssertionOne, canPlaceAssertionTwo ]
+        [ canPlaceTileNextToWhenEdgesMatchAssertion
+        , cannotPlaceTilesNextToWhenEdgesDiffer
+        ]
