@@ -18,20 +18,22 @@ placeTile board newTile ( newX, newY ) =
             board
 
         Nothing ->
-            let
-                tileWithCoords = { newTile | x = Just newX, y = Just newY }
+            if canPlaceTileAt board newTile ( newX, newY ) then
+                { newTile | x = Just newX, y = Just newY } :: board
+            else
+                board
 
-                canPlace =
-                    List.all
-                        (\( tile, place ) ->
-                            canPlaceTileNextTo tileWithCoords tile place
-                        )
-                        (getTilesAroundTile board tileWithCoords)
-            in
-                if canPlace then
-                    tileWithCoords :: board
-                else
-                    board
+
+canPlaceTileAt : Board -> Tile -> Coord -> Bool
+canPlaceTileAt board newTile ( x, y ) =
+    let
+        tileWithCoords = { newTile | x = Just x, y = Just y }
+    in
+        List.all
+            (\( tile, place ) ->
+                canPlaceTileNextTo tileWithCoords tile place
+            )
+            (getTilesAroundTile board tileWithCoords)
 
 
 getTilesAroundTile : Board -> Tile -> List ( Tile, TilePlacement )
