@@ -141,6 +141,60 @@ getTilesAroundTileOnlyIncludesPlacedAssertion =
             (assertEqual expected (getTilesAroundTile board tile1))
 
 
+placeTileWhenTileFitsPlacesItAssertion =
+    let
+        -- __ T3
+        -- T2 T1
+        tile1 =
+            { left = Road
+            , right = Road
+            , bottom = Grass
+            , top = Grass
+            , tileType = Generic
+            , x = Just 0
+            , y = Just 0
+            }
+
+        tile2 =
+            { left = Grass
+            , right = Road
+            , bottom = Castle
+            , top = Grass
+            , tileType = Generic
+            , x = Just -1
+            , y = Just 0
+            }
+
+        tile3 =
+            { left = Grass
+            , right = Road
+            , bottom = Grass
+            , top = Road
+            , tileType = Generic
+            , x = Just 0
+            , y = Just 1
+            }
+
+        tile4 =
+            { left = Grass
+            , right = Road
+            , bottom = Grass
+            , top = Grass
+            , tileType = RoadEnding
+            , x = Nothing
+            , y = Nothing
+            }
+
+        board = [ tile1, tile2, tile3 ]
+
+        expected =
+            { tile4 | x = Just -1, y = Just -1 } :: board
+    in
+        test
+            "Can place a tile when it fits in"
+            (assertEqual board (placeTile board tile4 ( -1, 1 )))
+
+
 tests : Test
 tests =
     suite
@@ -150,5 +204,6 @@ tests =
         , placeTileOnEmptyBoardAssertion
         , placeTileInSamePlaceAsExistingAssertion
         , placeTilePreventsIllegalMoveAssertion
+        , placeTileWhenTileFitsPlacesItAssertion
         , getTilesAroundTileOnlyIncludesPlacedAssertion
         ]
