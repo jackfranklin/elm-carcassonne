@@ -17,6 +17,5 @@ type alias Coord =
 tileAt : Board -> Coord -> Maybe Tile
 tileAt board ( x, y ) =
     board
-        |> List.filter Tile.isPlaced
-        |> List.filter (\t -> t.y ? 0 == y && t.x ? 0 == x)
+        |> List.filter (\t -> t.y == Just y && t.x == Just x)
         |> List.head
