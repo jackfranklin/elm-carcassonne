@@ -52,8 +52,6 @@ zipCoordsWithEdgesAroundTile tile =
                 tileX = unsafeMaybe tile.x
 
                 tileY = unsafeMaybe tile.y
-
-                coords = coordsAroundTile tile
             in
                 List.map
                     (\( x, y ) ->
@@ -66,7 +64,7 @@ zipCoordsWithEdgesAroundTile tile =
                         else
                             ( ( x, y ), Above )
                     )
-                    coords
+                    (coordsAroundTile tile)
 
 
 canPlaceTileNextTo : Tile -> Tile -> TilePlacement -> Bool

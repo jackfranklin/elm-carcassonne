@@ -1,7 +1,7 @@
 module BoardTests (..) where
 
 import ElmTest exposing (..)
-import Board exposing (tileAt, placeTile)
+import Board exposing (tileAt, placeTile, getTilesAroundTile)
 import TileEdge exposing (TileEdge(..))
 import Tile exposing (Tile, TilePlacement(..))
 import TileType exposing (TileType(..))
@@ -109,6 +109,38 @@ placeTilePreventsIllegalMoveAssertion =
             (assertEqual [ tile1 ] (placeTile [ tile1 ] tile2 ( 1, 0 )))
 
 
+getTilesAroundTileOnlyIncludesPlacedAssertion =
+    let
+        tile1 =
+            { left = Road
+            , right = Road
+            , bottom = Grass
+            , top = Grass
+            , tileType = Generic
+            , x = Just 0
+            , y = Just 0
+            }
+
+        -- tile 2 is to the left of tile 1
+        tile2 =
+            { left = Grass
+            , right = Grass
+            , bottom = Castle
+            , top = Grass
+            , tileType = Generic
+            , x = Just -1
+            , y = Just 0
+            }
+
+        board = [ tile1, tile2 ]
+
+        expected = [ ( tile2, Left ) ]
+    in
+        test
+            "getTilesAroundTile finds placed tiles and their placement"
+            (assertEqual expected (getTilesAroundTile board tile1))
+
+
 tests : Test
 tests =
     suite
@@ -118,4 +150,5 @@ tests =
         , placeTileOnEmptyBoardAssertion
         , placeTileInSamePlaceAsExistingAssertion
         , placeTilePreventsIllegalMoveAssertion
+        , getTilesAroundTileOnlyIncludesPlacedAssertion
         ]
