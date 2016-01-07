@@ -69,8 +69,8 @@ zipCoordsWithEdgesAroundTile tile =
                     coords
 
 
-canPlaceTileNextTo : Tile -> TilePlacement -> Tile -> Bool
-canPlaceTileNextTo placedTile placement newTile =
+canPlaceTileNextTo : Tile -> Tile -> TilePlacement -> Bool
+canPlaceTileNextTo placedTile newTile placement =
     case placement of
         Right ->
             placedTile.right == newTile.left

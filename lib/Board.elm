@@ -14,7 +14,6 @@ type alias Board =
 placeTile : Board -> Tile -> Coord -> Board
 placeTile board newTile ( newX, newY ) =
     case tileAt board ( newX, newY ) of
-        -- noop if there is already a cell there
         Just _ ->
             board
 
@@ -22,23 +21,25 @@ placeTile board newTile ( newX, newY ) =
             let
                 tileWithCoords = { newTile | x = Just newX, y = Just newY }
 
-                placedTilesAround =
-                    zipCoordsWithEdgesAroundTile tileWithCoords
-                        |> List.map (\( coords, place ) -> ( (tileAt board coords), place ))
-                        |> List.filter (\( tile, _ ) -> tile /= Nothing)
-                        |> List.map (\( tile, place ) -> ( (unsafeMaybe tile), place ))
-
                 canPlace =
                     List.all
                         (\( tile, place ) ->
-                            canPlaceTileNextTo tileWithCoords place tile
+                            canPlaceTileNextTo tileWithCoords tile place
                         )
-                        placedTilesAround
+                        (getTilesAroundTile board tileWithCoords)
             in
                 if canPlace then
                     tileWithCoords :: board
                 else
                     board
+
+
+getTilesAroundTile : Board -> Tile -> List ( Tile, TilePlacement )
+getTilesAroundTile board tile =
+    zipCoordsWithEdgesAroundTile tile
+        |> List.map (\( coords, place ) -> ( (tileAt board coords), place ))
+        |> List.filter (\( tile, _ ) -> tile /= Nothing)
+        |> List.map (\( tile, place ) -> ( (unsafeMaybe tile), place ))
 
 
 tileAt : Board -> Coord -> Maybe Tile

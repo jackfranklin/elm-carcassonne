@@ -29,7 +29,7 @@ canPlaceTileNextToWhenEdgesMatchAssertion =
             }
 
         -- can we put tile2 to the right of tile 1?
-        canPlace = canPlaceTileNextTo tile1 Right tile2
+        canPlace = canPlaceTileNextTo tile1 tile2 Right
     in
         test "two roads can join up" (assert canPlace)
 
@@ -57,7 +57,7 @@ cannotPlaceTilesNextToWhenEdgesDiffer =
             }
 
         -- can we put tile2 to the right of tile 1?
-        canPlace = canPlaceTileNextTo tile1 Right tile2
+        canPlace = canPlaceTileNextTo tile1 tile2 Right
     in
         test "a road and a grass cannot" (assert (not canPlace))
 
