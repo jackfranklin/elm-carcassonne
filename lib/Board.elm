@@ -1,4 +1,4 @@
-module Board (tileAt) where
+module Board (tileAt, placeTile) where
 
 import Tile exposing (Tile)
 import Maybe exposing (withDefault)
@@ -12,6 +12,17 @@ type alias Board =
 
 type alias Coord =
     ( Int, Int )
+
+
+placeTile : Board -> Tile -> Coord -> Board
+placeTile board newTile ( newX, newY ) =
+    case tileAt board ( newX, newY ) of
+        -- noop if there is already a board there
+        Just _ ->
+            board
+
+        Nothing ->
+            { newTile | x = Just newX, y = Just newY } :: board
 
 
 tileAt : Board -> Coord -> Maybe Tile
