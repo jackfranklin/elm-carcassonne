@@ -1,0 +1,51 @@
+.tile {
+  width: 60px;
+  height: 60px;
+  position: absolute;
+  border: 1px solid black;
+}
+
+.tile-edge, .tile-type {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  line-height: 20px;
+  text-align: center;
+}
+
+.tile-type {
+  left: 20px;
+  top: 20px;
+}
+
+.tile-castle {
+  background: brown;
+}
+
+.tile-road {
+  background: grey;
+}
+
+.tile-grass {
+  background: green;
+}
+.tile-top {
+  top: 0;
+  left: 20px;
+}
+
+.tile-left {
+  top: 20px;
+  left: 0;
+}
+
+.tile-right {
+  right: 0;
+  top: 20px;
+}
+
+.tile-bottom {
+  bottom: 0;
+  left: 20px;
+}

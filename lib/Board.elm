@@ -1,4 +1,4 @@
-module Board (tileAt, placeTile, getTilesAroundTile) where
+module Board (tileAt, placeTile, getTilesAroundTile, Board) where
 
 import Tile exposing (Tile, zipCoordsWithEdgesAroundTile, canPlaceTileNextTo, TilePlacement(..))
 import Coord exposing (Coord)
