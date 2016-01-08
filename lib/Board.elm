@@ -1,6 +1,6 @@
-module Board (tileAt, placeTile, getTilesAroundTile, Board) where
+module Board (tileAt, placeTile, getTilesAroundTile, potentialTileCoords, Board) where
 
-import Tile exposing (Tile, zipCoordsWithEdgesAroundTile, canPlaceTileNextTo, TilePlacement(..))
+import Tile exposing (Tile, zipCoordsWithEdgesAroundTile, canPlaceTileNextTo, TilePlacement(..), coordsAroundTile)
 import Coord exposing (Coord)
 import Maybe exposing (withDefault)
 import Util exposing (zip, unsafeMaybe)
@@ -9,6 +9,11 @@ import List
 
 type alias Board =
     List Tile
+
+
+potentialTileCoords : Board -> List Coord
+potentialTileCoords board =
+    List.concatMap coordsAroundTile board
 
 
 placeTile : Board -> Tile -> Coord -> Board

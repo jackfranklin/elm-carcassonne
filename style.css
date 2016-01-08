@@ -1,8 +1,21 @@
-.tile {
+.tile, .potential-tile {
   width: 60px;
   height: 60px;
   position: absolute;
+  background: #fff;
+}
+
+.next-tile {
   border: 1px solid black;
+}
+
+.potential-tile {
+  background: #ddd;
+}
+
+.potential-tile:hover {
+  cursor: pointer;
+  background: #ccc;
 }
 
 .tile-edge, .tile-type {

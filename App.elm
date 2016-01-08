@@ -18,13 +18,15 @@ import StartingTiles
 
 type alias Model =
     { availableTiles : List Tile
+    , nextTile : Tile
     , board : Board
     }
 
 
 initialModel : Model
 initialModel =
-    { availableTiles = StartingTiles.tiles
+    { availableTiles = (List.tail StartingTiles.tiles) ? []
+    , nextTile = (List.head StartingTiles.tiles) ? StartingTiles.fakeTile
     , board = [ StartingTiles.starterTile ]
     }
 
@@ -83,14 +85,19 @@ renderTileType tileType =
         [ text <| String.left 1 <| toString <| tileType ]
 
 
+calculateCssPositionForCoord : Int -> Int -> String
+calculateCssPositionForCoord window tile =
+    (toString ((window // 2) - (tile * 60))) ++ "px"
+
+
 topCssForTile : Int -> Tile -> String
 topCssForTile winY tile =
-    (toString ((winY // 2) - ((tile.y ? 0) * 60))) ++ "px"
+    calculateCssPositionForCoord winY (tile.y ? 0)
 
 
 leftCssForTile : Int -> Tile -> String
 leftCssForTile winX tile =
-    (toString ((winX // 2) - ((tile.y ? 0) * 60))) ++ "px"
+    calculateCssPositionForCoord winX (tile.x ? 0)
 
 
 tileStyle : ( Int, Int ) -> Tile -> Html.Attribute
@@ -98,7 +105,6 @@ tileStyle ( winX, winY ) tile =
     style
         [ ( "top", topCssForTile winY tile )
         , ( "left", leftCssForTile winX tile )
-        , ( "backgroundColor", "red" )
         ]
 
 
@@ -116,16 +122,60 @@ renderTile dimensions tile =
         ]
 
 
+renderTileEdgesAndType : Tile -> List Html
+renderTileEdgesAndType tile =
+    [ renderTileEdge tile.top "top"
+    , renderTileEdge tile.left "left"
+    , renderTileEdge tile.right "right"
+    , renderTileEdge tile.bottom "bottom"
+    , renderTileType tile.tileType
+    ]
+
+
+potentialTileStyle : ( Int, Int ) -> Coord -> Html.Attribute
+potentialTileStyle ( winX, winY ) ( x, y ) =
+    style
+        [ ( "top", calculateCssPositionForCoord winY y )
+        , ( "left", calculateCssPositionForCoord winX x )
+        ]
+
+
+renderPlacementTile : Signal.Address Action -> ( Int, Int ) -> Coord -> Html
+renderPlacementTile address dimensions coords =
+    div
+        [ class "potential-tile"
+        , potentialTileStyle dimensions coords
+        , onClick address (PlaceTile coords)
+        ]
+        []
+
+
 renderBoard : Signal.Address Action -> ( Int, Int ) -> Model -> Html
 renderBoard address dimensions model =
-    div [] (List.map (renderTile dimensions) model.board)
+    let
+        actualTiles = List.map (renderTile dimensions) model.board
+
+        placementTiles =
+            potentialTileCoords model.board
+                |> List.map (renderPlacementTile address dimensions)
+    in
+        div [] (List.append actualTiles placementTiles)
+
+
+renderNextTile : Tile -> Html
+renderNextTile tile =
+    div
+        [ class "next-tile tile" ]
+        (renderTileEdgesAndType tile)
 
 
 view : Signal.Address Action -> ( Int, Int ) -> Model -> Html
 view address dimensions model =
     div
         []
-        [ renderBoard address dimensions model ]
+        [ renderNextTile model.nextTile
+        , renderBoard address dimensions model
+        ]
 
 
 model : Signal Model

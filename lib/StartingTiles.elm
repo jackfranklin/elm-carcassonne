@@ -5,6 +5,11 @@ import TileEdge exposing (..)
 import Tile exposing (Tile)
 
 
+fakeTile : Tile
+fakeTile =
+    makeTile Grass Grass Grass Grass Generic
+
+
 makeTile : TileEdge -> TileEdge -> TileEdge -> TileEdge -> TileType -> Tile
 makeTile l r t b ty =
     { x = Nothing

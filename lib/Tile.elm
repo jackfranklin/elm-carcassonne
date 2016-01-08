@@ -1,4 +1,4 @@
-module Tile (Tile, canPlaceTileNextTo, isPlaced, zipCoordsWithEdgesAroundTile, TilePlacement(..)) where
+module Tile (Tile, canPlaceTileNextTo, isPlaced, zipCoordsWithEdgesAroundTile, coordsAroundTile, TilePlacement(..)) where
 
 import TileType exposing (..)
 import TileEdge exposing (..)
