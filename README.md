@@ -1,8 +1,16 @@
-# elm boilerplate
+# elm carcassonne
 
-My boilerplate for Elm applications.
+The Carcassonne board game in Elm-Lang.
 
-Provides the following:
+
+Todo / Further Ideas:
+
+- only show potential tile placements where a tile can actually go using `Board.canPlaceTileAt` to filter
+
+
+## Running Locally
+
+Clone, `npm install` and then:
 
 - `gulp test` to run tests with Elm-Test
 - `gulp serve` to run the app on a live server locally
