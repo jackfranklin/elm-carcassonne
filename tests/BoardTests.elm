@@ -1,7 +1,7 @@
 module BoardTests (..) where
 
 import ElmTest exposing (..)
-import Board exposing (tileAt, placeTile, getTilesAroundTile)
+import Board exposing (tileAt, placeTile, getTilesAroundTile, potentialTileCoords, canPlaceTileAt)
 import TileEdge exposing (TileEdge(..))
 import Tile exposing (Tile, TilePlacement(..))
 import TileType exposing (TileType(..))
@@ -195,6 +195,89 @@ placeTileWhenTileFitsPlacesItAssertion =
             (assertEqual board (placeTile board tile4 ( -1, 1 )))
 
 
+potentialTileCoordsForBigBoardAssertion =
+    let
+        tile1 =
+            { left = Road
+            , right = Road
+            , bottom = Grass
+            , top = Castle
+            , tileType = Generic
+            , x = Just 0
+            , y = Just 0
+            }
+
+        tile2 =
+            { left = Grass
+            , right = Road
+            , bottom = Road
+            , top = Grass
+            , tileType = Generic
+            , x = Just -1
+            , y = Just 0
+            }
+
+        expected = [ ( -2, 0 ), ( 0, 0 ), ( -1, -1 ), ( -1, 1 ), ( -1, 0 ), ( 1, 0 ), ( 0, -1 ), ( 0, 1 ) ]
+    in
+        test
+            "potential coords returns all potential tile places"
+            (assertEqual expected (potentialTileCoords [ tile2, tile1 ]))
+
+
+canPlaceTileAtAssertion =
+    let
+        tile1 =
+            { left = Road
+            , right = Road
+            , bottom = Grass
+            , top = Castle
+            , tileType = Generic
+            , x = Just 0
+            , y = Just 0
+            }
+
+        tile2 =
+            { left = Grass
+            , right = Road
+            , bottom = Road
+            , top = Castle
+            , tileType = Generic
+            , x = Nothing
+            , y = Nothing
+            }
+    in
+        test
+            "canPlaceTile returns true when it can be placed"
+            (assert (canPlaceTileAt [ tile1 ] tile2 ( -1, 0 )))
+
+
+canPlaceTileAtFalseWhenCantAssertion =
+    let
+        tile1 =
+            { left = Road
+            , right = Road
+            , bottom = Grass
+            , top = Castle
+            , tileType = Generic
+            , x = Just 0
+            , y = Just 0
+            }
+
+        tile2 =
+            { left = Grass
+            , right = Road
+            , bottom = Road
+            , top = Castle
+            , tileType = Generic
+            , x = Nothing
+            , y = Nothing
+            }
+    in
+        test
+            "canPlaceTile returns false when it cannot be placed"
+            (assert (not (canPlaceTileAt [ tile1 ] tile2 ( 1, 0 ))))
+
+
 tests : Test
 tests =
     suite
@@ -206,4 +289,6 @@ tests =
         , placeTilePreventsIllegalMoveAssertion
         , placeTileWhenTileFitsPlacesItAssertion
         , getTilesAroundTileOnlyIncludesPlacedAssertion
+        , canPlaceTileAtAssertion
+        , canPlaceTileAtFalseWhenCantAssertion
         ]

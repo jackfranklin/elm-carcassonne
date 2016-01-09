@@ -37,7 +37,7 @@ canPlaceTileAt board newTile ( x, y ) =
     in
         List.all
             (\( tile, place ) ->
-                canPlaceTileNextTo tile newTile place
+                canPlaceTileNextTo newTile tile place
             )
             (getTilesAroundTile board tileWithCoords)
 
