@@ -74,7 +74,7 @@ canPlaceTileNextTo placedTile newTile placement =
             placedTile.right == newTile.left
 
         Left ->
-            placedTile.right == newTile.left
+            placedTile.left == newTile.right
 
         Above ->
             placedTile.top == newTile.bottom

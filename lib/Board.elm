@@ -1,10 +1,11 @@
-module Board (tileAt, placeTile, getTilesAroundTile, potentialTileCoords, Board) where
+module Board (tileAt, placeTile, canPlaceTileAt, getTilesAroundTile, potentialTileCoords, Board) where
 
 import Tile exposing (Tile, zipCoordsWithEdgesAroundTile, canPlaceTileNextTo, TilePlacement(..), coordsAroundTile)
 import Coord exposing (Coord)
 import Maybe exposing (withDefault)
 import Util exposing (zip, unsafeMaybe)
 import List
+import Debug
 
 
 type alias Board =
@@ -36,7 +37,7 @@ canPlaceTileAt board newTile ( x, y ) =
     in
         List.all
             (\( tile, place ) ->
-                canPlaceTileNextTo tileWithCoords tile place
+                canPlaceTileNextTo tile newTile place
             )
             (getTilesAroundTile board tileWithCoords)
 

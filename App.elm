@@ -157,6 +157,7 @@ renderBoard address dimensions model =
 
         placementTiles =
             potentialTileCoords model.board
+                |> List.filter (canPlaceTileAt model.board model.nextTile)
                 |> List.map (renderPlacementTile address dimensions)
     in
         div [] (List.append actualTiles placementTiles)
