@@ -102,19 +102,24 @@ renderTileType tileType =
         [ text <| String.left 1 <| toString <| tileType ]
 
 
-calculateCssPositionForCoord : Int -> Int -> String
-calculateCssPositionForCoord window tile =
-    (toString ((window // 2) + (tile * 60))) ++ "px"
+calculateLeftCssPositionForCoord : Int -> Int -> String
+calculateLeftCssPositionForCoord winX tileX =
+    (toString ((winX // 2) + (tileX * 60))) ++ "px"
+
+
+calculateTopCssPositionForCoord : Int -> Int -> String
+calculateTopCssPositionForCoord winY tileY =
+    (toString ((winY // 2) - (tileY * 60))) ++ "px"
 
 
 topCssForTile : Int -> Tile -> String
 topCssForTile winY tile =
-    calculateCssPositionForCoord winY (tile.y ? 0)
+    calculateTopCssPositionForCoord winY (tile.y ? 0)
 
 
 leftCssForTile : Int -> Tile -> String
 leftCssForTile winX tile =
-    calculateCssPositionForCoord winX (tile.x ? 0)
+    calculateLeftCssPositionForCoord winX (tile.x ? 0)
 
 
 tileStyle : ( Int, Int ) -> Tile -> Html.Attribute
@@ -152,8 +157,8 @@ renderTileEdgesAndType tile =
 potentialTileStyle : ( Int, Int ) -> Coord -> Html.Attribute
 potentialTileStyle ( winX, winY ) ( x, y ) =
     style
-        [ ( "top", calculateCssPositionForCoord winY y )
-        , ( "left", calculateCssPositionForCoord winX x )
+        [ ( "top", calculateTopCssPositionForCoord winY y )
+        , ( "left", calculateLeftCssPositionForCoord winX x )
         ]
 
 
