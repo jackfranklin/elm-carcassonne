@@ -53,8 +53,25 @@ update action model =
             -- TODO
             model
 
-        PlaceTile ( x, y ) ->
-            model
+        PlaceTile coords ->
+            -- place the new tile
+            -- pull an item off model.availableTiles & make it the next tile
+            let
+                nextTile = List.head model.availableTiles
+
+                restTiles = List.tail model.availableTiles
+            in
+                case nextTile of
+                    Just tile ->
+                        { model
+                            | board = placeTile model.board model.nextTile coords
+                            , nextTile = nextTile ? StartingTiles.fakeTile
+                            , availableTiles = restTiles ? []
+                        }
+
+                    Nothing ->
+                        -- TODO: deal with this (game over)
+                        model
 
         PlacePerson ( x, y ) ->
             -- TODO
