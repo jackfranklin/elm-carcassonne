@@ -32,14 +32,19 @@ placeTile board newTile ( newX, newY ) =
 
 canPlaceTileAt : Board -> Tile -> Coord -> Bool
 canPlaceTileAt board newTile ( x, y ) =
-    let
-        tileWithCoords = { newTile | x = Just x, y = Just y }
-    in
-        List.all
-            (\( tile, place ) ->
-                canPlaceTileNextTo newTile tile place
-            )
-            (getTilesAroundTile board tileWithCoords)
+    case tileAt board ( x, y ) of
+        Just _ ->
+            False
+
+        Nothing ->
+            let
+                tileWithCoords = { newTile | x = Just x, y = Just y }
+            in
+                List.all
+                    (\( tile, place ) ->
+                        canPlaceTileNextTo newTile tile place
+                    )
+                    (getTilesAroundTile board tileWithCoords)
 
 
 getTilesAroundTile : Board -> Tile -> List ( Tile, TilePlacement )

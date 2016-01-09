@@ -5,9 +5,6 @@ The Carcassonne board game in Elm-Lang.
 
 Todo / Further Ideas:
 
-- only show potential tile placements where a tile can actually go using `Board.canPlaceTileAt` to filter
-
-
 ## Running Locally
 
 Clone, `npm install` and then:
