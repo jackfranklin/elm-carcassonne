@@ -70,8 +70,14 @@ update action model =
                         }
 
                     Nothing ->
-                        -- TODO: deal with this (game over)
-                        model
+                        -- TODO: model.nextTile should still be placed here
+                        -- but then we should tick into a game over mode
+                        -- so at this point we should end the game
+                        { model
+                            | board = placeTile model.board model.nextTile coords
+                            , nextTile = StartingTiles.fakeTile
+                            , availableTiles = restTiles ? []
+                        }
 
         PlacePerson ( x, y ) ->
             -- TODO
