@@ -14,6 +14,8 @@ a turn has stages:
 - check if the tile placement means any people are picked up, and update points accordingly
 - end
 
+- deal with turn transitions erroring (for now, just show the error)
+
 ## Running Locally
 
 Clone, `npm install` and then:
