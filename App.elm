@@ -16,6 +16,7 @@ import Coord exposing (Coord)
 import StartingTiles
 import Player exposing (Player, makePlayer)
 import Colour exposing (Colour(..))
+import TurnStateMachine exposing (Turn, makeTurn)
 
 
 type alias Model =
@@ -23,12 +24,18 @@ type alias Model =
     , nextTile : Tile
     , board : Board
     , players : List Player
+    , turn : Turn
     }
+
+
+firstPlayer : Player
+firstPlayer =
+    makePlayer Red
 
 
 initialPlayers : List Player
 initialPlayers =
-    [ makePlayer Red
+    [ firstPlayer
     , makePlayer Blue
     ]
 
@@ -39,6 +46,7 @@ initialModel =
     , nextTile = (List.head StartingTiles.tiles) ? StartingTiles.fakeTile
     , board = [ StartingTiles.starterTile ]
     , players = initialPlayers
+    , turn = makeTurn firstPlayer
     }
 
 
@@ -209,11 +217,19 @@ renderNextTile tile =
         (renderTileEdgesAndType tile)
 
 
+renderCurrentTurn : Turn -> Html
+renderCurrentTurn turn =
+    div
+        [ class "current-turn" ]
+        [ text (toString turn.state) ]
+
+
 view : Signal.Address Action -> ( Int, Int ) -> Model -> Html
 view address dimensions model =
     div
         []
         [ renderNextTile model.nextTile
+        , renderCurrentTurn model.turn
         , renderBoard address dimensions model
         ]
 
