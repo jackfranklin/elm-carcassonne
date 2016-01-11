@@ -1,6 +1,6 @@
 module TurnStateMachine (..) where
 
-import Statey exposing (makeState, StateMachine, StateRecord)
+import Statey exposing (makeState, StateMachine, StateRecord, State)
 import Player exposing (Player)
 
 
@@ -47,3 +47,13 @@ stateMachine =
 makeTurn : Player -> Turn
 makeTurn player =
     { state = placeTile, player = player }
+
+
+transitionSilently : State -> StateRecord Turn -> StateRecord Turn
+transitionSilently newState record =
+    case Statey.transition stateMachine newState record of
+        Ok newRecord ->
+            newRecord
+
+        Err _ ->
+            record

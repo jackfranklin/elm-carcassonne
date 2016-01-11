@@ -16,12 +16,12 @@ import Coord exposing (Coord)
 import StartingTiles
 import Player exposing (Player, makePlayer)
 import Colour exposing (Colour(..))
-import TurnStateMachine exposing (Turn, makeTurn)
+import TurnStateMachine exposing (Turn, makeTurn, placePerson, transitionSilently)
 
 
 type alias Model =
     { availableTiles : List Tile
-    , nextTile : Tile
+    , nextTile : Maybe Tile
     , board : Board
     , players : List Player
     , turn : Turn
@@ -43,7 +43,7 @@ initialPlayers =
 initialModel : Model
 initialModel =
     { availableTiles = (List.tail StartingTiles.tiles) ? []
-    , nextTile = (List.head StartingTiles.tiles) ? StartingTiles.fakeTile
+    , nextTile = List.head StartingTiles.tiles
     , board = [ StartingTiles.starterTile ]
     , players = initialPlayers
     , turn = makeTurn firstPlayer
@@ -73,30 +73,32 @@ update action model =
             model
 
         PlaceTile coords ->
-            -- place the new tile
-            -- pull an item off model.availableTiles & make it the next tile
-            let
-                nextTile = List.head model.availableTiles
+            -- ensure we have a tile to place
+            -- we should always because a user should not be able to click and
+            -- end up here unless there is
+            case model.nextTile of
+                Nothing ->
+                    -- TODO: should update some state here to trigger end of game
+                    model
 
-                restTiles = List.tail model.availableTiles
-            in
-                case nextTile of
-                    Just tile ->
-                        { model
-                            | board = placeTile model.board model.nextTile coords
-                            , nextTile = nextTile ? StartingTiles.fakeTile
-                            , availableTiles = restTiles ? []
-                        }
+                Just tileToPlace ->
+                    -- TODO: update the state of the turn record
+                    case List.head model.availableTiles of
+                        Just nextTile ->
+                            { model
+                                | board = placeTile model.board tileToPlace coords
+                                , nextTile = Just nextTile
+                                , availableTiles = (List.tail model.availableTiles) ? []
+                                , turn = (transitionSilently placePerson model.turn)
+                            }
 
-                    Nothing ->
-                        -- TODO: model.nextTile should still be placed here
-                        -- but then we should tick into a game over mode
-                        -- so at this point we should end the game
-                        { model
-                            | board = placeTile model.board model.nextTile coords
-                            , nextTile = StartingTiles.fakeTile
-                            , availableTiles = restTiles ? []
-                        }
+                        Nothing ->
+                            -- TODO: should update some state here to trigger end of game
+                            { model
+                                | board = placeTile model.board tileToPlace coords
+                                , nextTile = Nothing
+                                , availableTiles = []
+                            }
 
         PlacePerson ( x, y ) ->
             -- TODO
@@ -203,18 +205,30 @@ renderBoard address dimensions model =
         actualTiles = List.map (renderTile dimensions) model.board
 
         placementTiles =
-            potentialTileCoords model.board
-                |> List.filter (canPlaceTileAt model.board model.nextTile)
-                |> List.map (renderPlacementTile address dimensions)
+            case model.nextTile of
+                Just nextTile ->
+                    potentialTileCoords model.board
+                        |> List.filter (canPlaceTileAt model.board nextTile)
+                        |> List.map (renderPlacementTile address dimensions)
+
+                Nothing ->
+                    []
     in
         div [] (List.append actualTiles placementTiles)
 
 
-renderNextTile : Tile -> Html
+renderNextTile : Maybe Tile -> Html
 renderNextTile tile =
-    div
-        [ class "next-tile tile" ]
-        (renderTileEdgesAndType tile)
+    case tile of
+        Just t ->
+            div
+                [ class "next-tile tile" ]
+                (renderTileEdgesAndType t)
+
+        Nothing ->
+            div
+                [ class "next-tile tile" ]
+                [ text "No tiles left" ]
 
 
 renderCurrentTurn : Turn -> Html
