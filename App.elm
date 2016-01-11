@@ -14,13 +14,23 @@ import TileEdge exposing (TileEdge)
 import TileType exposing (TileType)
 import Coord exposing (Coord)
 import StartingTiles
+import Player exposing (Player, makePlayer)
+import Colour exposing (Colour(..))
 
 
 type alias Model =
     { availableTiles : List Tile
     , nextTile : Tile
     , board : Board
+    , players : List Player
     }
+
+
+initialPlayers : List Player
+initialPlayers =
+    [ makePlayer Red
+    , makePlayer Blue
+    ]
 
 
 initialModel : Model
@@ -28,6 +38,7 @@ initialModel =
     { availableTiles = (List.tail StartingTiles.tiles) ? []
     , nextTile = (List.head StartingTiles.tiles) ? StartingTiles.fakeTile
     , board = [ StartingTiles.starterTile ]
+    , players = initialPlayers
     }
 
 
