@@ -18,6 +18,8 @@ import Player exposing (Player, makePlayer)
 import Colour exposing (Colour(..))
 import Statey exposing (..)
 import TurnStateMachine exposing (Turn, placePersonState, transitionSilently, makeTurn, placeTileState)
+import Person exposing (PersonType(..))
+import Debug
 
 
 type alias Model =
@@ -55,7 +57,7 @@ type Action
     = NoOp
     | RotateTile
     | PlaceTile Coord
-    | PlacePerson Coord
+    | PlacePerson PersonType
 
 
 actions : Signal.Mailbox Action
@@ -107,7 +109,7 @@ update action model =
                                 , availableTiles = []
                             }
 
-        PlacePerson ( x, y ) ->
+        PlacePerson personType ->
             -- TODO
             model
 
@@ -224,18 +226,21 @@ renderBoard address dimensions model =
         div [] (List.append actualTiles placementTiles)
 
 
-renderNextTile : Maybe Tile -> Html
-renderNextTile tile =
-    case tile of
-        Just t ->
-            div
-                [ class "next-tile tile" ]
-                (renderTileEdgesAndType t)
+renderNextTile : Turn -> Maybe Tile -> Html
+renderNextTile turn tile =
+    if getState turn == placeTileState then
+        case tile of
+            Just t ->
+                div
+                    [ class "next-tile tile" ]
+                    (renderTileEdgesAndType t)
 
-        Nothing ->
-            div
-                [ class "next-tile tile" ]
-                [ text "No tiles left" ]
+            Nothing ->
+                div
+                    [ class "next-tile tile" ]
+                    [ text "No tiles left" ]
+    else
+        div [] []
 
 
 renderCurrentTurn : Turn -> Html
@@ -255,12 +260,31 @@ renderRotateButton address turn =
         div [] []
 
 
+renderPlacePersonButton : Signal.Address Action -> Turn -> Html
+renderPlacePersonButton address turn =
+    if getState turn == placePersonState then
+        case Player.freePeople turn.player of
+            [] ->
+                div [] []
+
+            players ->
+                div
+                    [ class "press-player-button" ]
+                    [ -- TODO: farmers are way more complex because they have to go on a segment
+                      -- of a tile
+                      button [ onClick address (PlacePerson Farm) ] [ text "Add Farmer" ]
+                    ]
+    else
+        div [] []
+
+
 view : Signal.Address Action -> ( Int, Int ) -> Model -> Html
 view address dimensions model =
     div
         []
-        [ renderNextTile model.nextTile
+        [ renderNextTile model.turn model.nextTile
         , renderRotateButton address model.turn
+        , renderPlacePersonButton address model.turn
         , renderCurrentTurn model.turn
         , renderBoard address dimensions model
         ]

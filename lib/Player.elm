@@ -17,3 +17,10 @@ makePlayer colour =
     , people = initialPeople
     , colour = colour
     }
+
+
+freePeople : Player -> List Person
+freePeople player =
+    List.filter
+        (\person -> person.x == Nothing && person.y == Nothing)
+        player.people

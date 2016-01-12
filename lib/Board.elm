@@ -17,6 +17,11 @@ potentialTileCoords board =
     List.concatMap coordsAroundTile board
 
 
+lastPlacedTile : Board -> Tile
+lastPlacedTile =
+    unsafeMaybe << List.head
+
+
 placeTile : Board -> Tile -> Coord -> Board
 placeTile board newTile ( newX, newY ) =
     case tileAt board ( newX, newY ) of
