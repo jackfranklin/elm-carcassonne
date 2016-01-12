@@ -256,7 +256,3 @@ model =
 main : Signal Html
 main =
     Signal.map2 (view actions.address) Window.dimensions model
-
-
-
--- Signal.map (view actions.address) model
