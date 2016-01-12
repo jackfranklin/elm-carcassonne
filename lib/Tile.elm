@@ -1,4 +1,4 @@
-module Tile (Tile, canPlaceTileNextTo, isPlaced, zipCoordsWithEdgesAroundTile, coordsAroundTile, TilePlacement(..)) where
+module Tile (Tile, canPlaceTileNextTo, isPlaced, zipCoordsWithEdgesAroundTile, coordsAroundTile, rotateTile, TilePlacement(..)) where
 
 import TileType exposing (..)
 import TileEdge exposing (..)
@@ -23,6 +23,16 @@ type alias Tile =
     , tileType : TileType
     , x : Maybe Int
     , y : Maybe Int
+    }
+
+
+rotateTile : Tile -> Tile
+rotateTile tile =
+    { tile
+        | left = tile.bottom
+        , top = tile.left
+        , right = tile.top
+        , bottom = tile.right
     }
 
 

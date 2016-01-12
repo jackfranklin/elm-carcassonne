@@ -16,7 +16,8 @@ import Coord exposing (Coord)
 import StartingTiles
 import Player exposing (Player, makePlayer)
 import Colour exposing (Colour(..))
-import TurnStateMachine exposing (Turn, makeTurn, placePerson, transitionSilently)
+import Statey exposing (..)
+import TurnStateMachine exposing (Turn, placePersonState, transitionSilently, makeTurn, placeTileState)
 
 
 type alias Model =
@@ -52,7 +53,7 @@ initialModel =
 
 type Action
     = NoOp
-    | RotateTile Tile
+    | RotateTile
     | PlaceTile Coord
     | PlacePerson Coord
 
@@ -68,9 +69,14 @@ update action model =
         NoOp ->
             model
 
-        RotateTile tile ->
+        RotateTile ->
             -- TODO
-            model
+            case model.nextTile of
+                Just tile ->
+                    { model | nextTile = Just (rotateTile tile) }
+
+                Nothing ->
+                    model
 
         PlaceTile coords ->
             -- ensure we have a tile to place
@@ -82,14 +88,15 @@ update action model =
                     model
 
                 Just tileToPlace ->
-                    -- TODO: update the state of the turn record
                     case List.head model.availableTiles of
                         Just nextTile ->
                             { model
                                 | board = placeTile model.board tileToPlace coords
                                 , nextTile = Just nextTile
-                                , availableTiles = (List.tail model.availableTiles) ? []
-                                , turn = (transitionSilently placePerson model.turn)
+                                , availableTiles =
+                                    (List.tail model.availableTiles) ? []
+                                    -- TODO: should deal with this failing?
+                                , turn = (transitionSilently placePersonState model.turn)
                             }
 
                         Nothing ->
@@ -238,11 +245,22 @@ renderCurrentTurn turn =
         [ text (toString turn.state) ]
 
 
+renderRotateButton : Signal.Address Action -> Turn -> Html
+renderRotateButton address turn =
+    if getState turn == placeTileState then
+        div
+            [ class "rotate-button" ]
+            [ button [ onClick address RotateTile ] [ text "Rotate" ] ]
+    else
+        div [] []
+
+
 view : Signal.Address Action -> ( Int, Int ) -> Model -> Html
 view address dimensions model =
     div
         []
         [ renderNextTile model.nextTile
+        , renderRotateButton address model.turn
         , renderCurrentTurn model.turn
         , renderBoard address dimensions model
         ]

@@ -8,37 +8,37 @@ type alias Turn =
     StateRecord { player : Player }
 
 
-placeTile =
+placeTileState =
     makeState "placeTile"
 
 
-placePerson =
+placePersonState =
     makeState "placePerson"
 
 
-pickUpPeople =
+pickUpPeopleState =
     makeState "pickUpPeople"
 
 
-endTurn =
+endTurnState =
     makeState "endTurn"
 
 
 stateMachine : StateMachine Turn
 stateMachine =
     { states =
-        [ placeTile
-        , placePerson
-        , pickUpPeople
-        , endTurn
+        [ placeTileState
+        , placePersonState
+        , pickUpPeopleState
+        , endTurnState
         ]
     , transitions =
-        [ ( placeTile, placePerson )
-        , ( placeTile, pickUpPeople )
-        , ( placePerson, pickUpPeople )
-        , ( pickUpPeople, endTurn )
-        , ( placeTile, endTurn )
-        , ( placePerson, endTurn )
+        [ ( placeTileState, placePersonState )
+        , ( placeTileState, pickUpPeopleState )
+        , ( placePersonState, pickUpPeopleState )
+        , ( pickUpPeopleState, endTurnState )
+        , ( placeTileState, endTurnState )
+        , ( placePersonState, endTurnState )
         ]
     , guards = []
     }
@@ -46,7 +46,7 @@ stateMachine =
 
 makeTurn : Player -> Turn
 makeTurn player =
-    { state = placeTile, player = player }
+    { state = placeTileState, player = player }
 
 
 transitionSilently : State -> StateRecord Turn -> StateRecord Turn
